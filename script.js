@@ -31,8 +31,6 @@ function loadTable() {
 function checkButton(id) {
 	var row = Math.floor(parseInt(id) / 10);
 	var column = Math.floor(parseInt(id) % 10);
-	alert(row);
-	alert(column);
 	if (table[row][column] == 4) {
 	 	for (var i = 0; i < 9; i++) {
 		    for (var j = 0; j < 9; j++) {
@@ -46,39 +44,43 @@ function checkButton(id) {
 		document.getElementById("status").innerHTML = "You lost! Please Restart!";
 		document.getElementById("status").style.color = "red";
 	} else if (table[row][column] != 4) {
-			if (table[row][column - 1] == 4 && (row >= 0 && row <= 8  && column - 1 >= 0 && column - 1 <= 8)) {
-				table[row][column]++;
-			}
-			if (table[row][column + 1] == 4 && (row >= 0 && row <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
-				table[row][column]++;
-			}
-			if (table[row - 1][j + 1] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
-				table[row][column]++;
-			}
-			if (table[row - 1][column + 1] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
-				table[row][column]++;
-			}
-			if (table[row - 1][column - 1] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column - 1 >= 0 && column - 1 <= 8)) {
-				table[row][column]++;
-			}
-			if (table[row + 1][column - 1] == 4 && (row + 1 >= 0 && row + 1<= 8  && column - 1 >= 0 && column - 1 <= 8)) {
-				table[row][column]++;
-			}
-			if (table[row - 1][column] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column >= 0 && column <= 8)) {
-				table[row][column]++;
-			}
-			if (table[row + 1][column] == 4 && (row + 1 >= 0 && row + 1 <= 8  && column>= 0 && column<= 8)) {
-				table[row][column]++;
-			}
-			//alert(table[row][column]);
-		document.getElementById(id).innerHTML = table[row][column];
-		document.getElementById(id).style.background = "green";
+		//trebuie calc inainte, pt ca ma incurca acele 0-uri
+		if (table[row][column - 1] == 4 && (row >= 0 && row <= 8  && column - 1 >= 0 && column - 1 <= 8)) {
+			table[row][column]++;
+		}
+		if (table[row][column + 1] == 4 && (row >= 0 && row <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
+			table[row][column]++;
+		}
+		if (table[row - 1][j + 1] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
+			table[row][column]++;
+		}
+		if (table[row - 1][column + 1] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
+			table[row][column]++;
+		}
+		if (table[row - 1][column - 1] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column - 1 >= 0 && column - 1 <= 8)) {
+			table[row][column]++;
+		}
+		if (table[row + 1][column - 1] == 4 && (row + 1 >= 0 && row + 1<= 8  && column - 1 >= 0 && column - 1 <= 8)) {
+			table[row][column]++;
+		}
+		if (table[row - 1][column] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column >= 0 && column <= 8)) {
+			table[row][column]++;
+		}
+		if (table[row + 1][column] == 4 && (row + 1 >= 0 && row + 1 <= 8  && column>= 0 && column<= 8)) {
+			table[row][column]++;
+		}
+		emptySpaces(table[row][column], id);
 	} 
-	if (row == 8 && column == 0) {
-		document.getElementById(id).innerHTML = table[row][column];
-		document.getElementById(id).style.background = "green";
-	}
 	return false;
+}
+
+function emptySpaces(bombs, id) {
+	if (bombs != 0) {
+		document.getElementById(id).innerHTML = bombs;
+		document.getElementById(id).style.background = "green";
+	} else if (bombs == 0) {
+
+	}
 }
 
 function restartGame() {
