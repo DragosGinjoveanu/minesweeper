@@ -1,4 +1,3 @@
-//trb sa schimb numaratoarea de la 1
 var table = [];
 for (var i = 0; i < 9; i++) {
     table[i] = [];
