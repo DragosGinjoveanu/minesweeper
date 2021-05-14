@@ -5,48 +5,19 @@ for (var i = 0; i < 9; i++) {
         table[i][j] = 0;
     }
 }
+
+// calculates the position of the bombs on the playing board
 var bombs = 10;
 while (bombs) {
 	var row = Math.floor(Math.random() * 9); 
 	var column = Math.floor(Math.random() * 9);
-	if (table[row][column] != 4) {
-		table[row][column] = 4;
+	if (table[row][column] != 9) {
+		table[row][column] = 9;
 		bombs--; 
 	}
 }
 
-function calcTable() {
-	for (var row = 0; i < 9; i++) {
-		for (var column = 0; j < 9; j++) {
-			if (table[row][column] != 4) {
-					if (table[row][column - 1] == 4 && (row >= 0 && row <= 8  && column - 1 >= 0 && column - 1 <= 8)) {
-				table[row][column]++;
-				}
-				if (table[row][column + 1] == 4 && (row >= 0 && row <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
-					table[row][column]++;
-				}
-				if (table[row - 1][j + 1] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
-					table[row][column]++;
-				}
-				if (table[row - 1][column + 1] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
-					table[row][column]++;
-				}
-				if (table[row - 1][column - 1] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column - 1 >= 0 && column - 1 <= 8)) {
-					table[row][column]++;
-				}
-				if (table[row + 1][column - 1] == 4 && (row + 1 >= 0 && row + 1<= 8  && column - 1 >= 0 && column - 1 <= 8)) {
-					table[row][column]++;
-				}
-				if (table[row - 1][column] == 4 && (row - 1 >= 0 && row - 1 <= 8  && column >= 0 && column <= 8)) {
-					table[row][column]++;
-				}
-				if (table[row + 1][column] == 4 && (row + 1 >= 0 && row + 1 <= 8  && column>= 0 && column<= 8)) {
-					table[row][column]++;
-				}
-			}
-		}
-	}
-}
+// generates playing board
 function loadTable() {
 	for (var i = 0; i < 9; i++) {
 		$('#table').append(`
@@ -58,16 +29,44 @@ function loadTable() {
 			`);
 		}
 	}
-	calcTable();
 }
 
+// calculates the value of a specific cell
+function calcValue(row, column) {
+	if (table[row][column - 1] == 9 && (row >= 0 && row <= 8  && column - 1 >= 0 && column - 1 <= 8)) {
+		table[row][column]++;
+	}
+	if (table[row][column + 1] == 9 && (row >= 0 && row <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
+		table[row][column]++;
+	}
+	if (table[row - 1][j + 1] == 9 && (row - 1 >= 0 && row - 1 <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
+		table[row][column]++;
+	}
+	if (table[row - 1][column + 1] == 9 && (row - 1 >= 0 && row - 1 <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
+		table[row][column]++;
+	}
+	if (table[row - 1][column - 1] == 9 && (row - 1 >= 0 && row - 1 <= 8  && column - 1 >= 0 && column - 1 <= 8)) {
+		table[row][column]++;
+	}
+	if (table[row + 1][column - 1] == 9 && (row + 1 >= 0 && row + 1<= 8  && column - 1 >= 0 && column - 1 <= 8)) {
+		table[row][column]++;
+	}
+	if (table[row - 1][column] == 9 && (row - 1 >= 0 && row - 1 <= 8  && column >= 0 && column <= 8)) {
+		table[row][column]++;
+	}
+	if (table[row + 1][column] == 9 && (row + 1 >= 0 && row + 1 <= 8  && column>= 0 && column<= 8)) {
+		table[row][column]++;
+	}
+}
+
+// checks if it is a bomb/not
 function checkButton(id) {
 	var row = Math.floor(parseInt(id) / 10);
 	var column = Math.floor(parseInt(id) % 10);
-	if (table[row][column] == 4) {
+	if (table[row][column] == 9) {
 	 	for (var i = 0; i < 9; i++) {
 		    for (var j = 0; j < 9; j++) {
-		        if (table[i][j] == 4) {
+		        if (table[i][j] == 9) {
 		        	var c = i + String(j);
 		        	document.getElementById(c).innerHTML = ("💣");
 		        	document.getElementById(c).style.background='#E71023';
@@ -76,22 +75,21 @@ function checkButton(id) {
 		}
 		document.getElementById("status").innerHTML = "You lost! Please Restart!";
 		document.getElementById("status").style.color = "red";
-	} else if (table[row][column] != 4 && table[row][column] != 0) {
-		document.getElementById(id).innerHTML = table[row][column];
-		document.getElementById(id).style.background = "green";
-		//emptySpaces(table[row][column], id);
-	} 
+	} else if (table[row][column] != 9) {
+		calcValue(row, column); // aflu valoarea unei celule.
+		emptySpaces(id, table[row][column], row, column);
+	}
 	return false;
 }
 
-// function emptySpaces(bombs, id) {
-// 	if (bombs != 0) {
-// 		document.getElementById(id).innerHTML = bombs;
-// 		document.getElementById(id).style.background = "green";
-// 	} else if (bombs == 0) {
+// emptys the spaces by game rules
+function emptySpaces(id, cellValue, row, column) {
+	if (cellValue != 0) {
+		document.getElementById(id).innerHTML = cellValue;
+		document.getElementById(id).style.background = "green";
+	}
 
-// 	}
-// }
+}
 
 function restartGame() {
 	location.reload();
