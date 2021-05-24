@@ -8,8 +8,8 @@ for (var i = 1; i <= 11; i++) {
 
 //puts one bomb on the playing board
 function loadBomb() {
-	var row = Math.floor(Math.random() * (10 - 2 + 1) + 2);
-	var column = Math.floor(Math.random() * (10 - 2 + 1) + 2);
+	var row = Math.floor(Math.random() * 9 + 2);
+	var column = Math.floor(Math.random() * 9 + 2);
 	if (table[row][column] == 0) {
 		table[row][column] = 9;
 	} else if (table[row][column] == 9) {
@@ -37,6 +37,7 @@ function loadTable() {
 
 // checks if it is a bomb/not
 function checkButton(event, id) {
+	//gets row/column from id
 	var n = '', rowCopy, columnCopy;
 	for (var i = 0; i < id.length; i++) {
 		n += id.charAt(i);
@@ -88,26 +89,28 @@ function emptySpaces(row, column, bombs) {
  		if (bombs != 0) {
  			document.getElementById(row + " " + column).innerHTML = bombs;
  			document.getElementById(row + " " + column).className = "btn btn-success btn-lg";
- 			table[i][j] = 1;
+ 			table[row][column] = 1;
  		} else {
  			document.getElementById(row + " " + column).innerHTML = ("0");
  			document.getElementById(row + " " + column).className = "btn btn-success btn-lg";
  			table[row][column] = 2;
- 			// aici trb sa revizuiesc
  			for (var i = row - 1; i <= row + 1; i++) {
  				for (var j = column - 1; j <= column + 1; j++) {
  					var nrBombs = calcBombs(i, j);
  					emptySpaces(i, j, nrBombs);
  				}
  			}
- 			// un for pt a elibera vecinii, table[rand][coloana = 2];
  		}
+ 	}
+ 	if (checkGameStatus()) {
+ 		document.getElementById("status").innerHTML = "You won!";
+ 		document.getElementById("status").style.color = "green";
  	}
  }
 
 function checkGameStatus() {
-	for (var i = 0; i < 9; i++) {
-		for (var j = 0; j < 9; j++) {
+	for (var i = 2; i <= 10; i++) {
+		for (var j = 2; j <= 10; j++) {
 			if (table[i][j] == 0) {
 				return 0;
 			}
