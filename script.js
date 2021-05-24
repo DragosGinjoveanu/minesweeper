@@ -49,7 +49,7 @@ function checkButton(event, id) {
 	columnCopy = n;
 	var row = parseInt(rowCopy);
 	var column = parseInt(columnCopy);
-	if (event.buttons == '2') {
+	if (event.buttons == '2' && (table[row][column] == 0 || table[row][column] == 9)) {
 		document.getElementById(id).innerHTML = ('🚩');
 	} else {
 		if (table[row][column] == 9) {
