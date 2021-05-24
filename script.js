@@ -17,7 +17,7 @@ function loadBomb() {
 	}
 }
 
-// generates playing board
+//generates playing board
 function loadTable() {
 	for (var i = 2; i <= 10; i++) {
 		$('#table').append(`
@@ -35,7 +35,7 @@ function loadTable() {
 	}
 }
 
-// checks if it is a bomb/not
+// checks if the cell is a bomb/not
 function checkButton(event, id) {
 	//gets row/column from id
 	var n = '', rowCopy, columnCopy;
@@ -49,9 +49,11 @@ function checkButton(event, id) {
 	columnCopy = n;
 	var row = parseInt(rowCopy);
 	var column = parseInt(columnCopy);
+	//right click
 	if (event.buttons == '2' && (table[row][column] == 0 || table[row][column] == 9)) {
 		document.getElementById(id).innerHTML = ('🚩');
 	} else {
+		//left click
 		if (table[row][column] == 9) {
 	 		for (var i = 2; i <= 10; i++) {
 		    	for (var j = 2; j <= 10; j++) {
@@ -108,7 +110,7 @@ function emptySpaces(row, column, bombs) {
  		document.getElementById("status").innerHTML = "You won!";
  		document.getElementById("status").style.color = "green";
  	}
- }
+}
 
 function checkGameStatus() {
 	for (var i = 2; i <= 10; i++) {
