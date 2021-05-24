@@ -96,8 +96,10 @@ function emptySpaces(row, column, bombs) {
  			table[row][column] = 2;
  			for (var i = row - 1; i <= row + 1; i++) {
  				for (var j = column - 1; j <= column + 1; j++) {
- 					var nrBombs = calcBombs(i, j);
- 					emptySpaces(i, j, nrBombs);
+ 					if (i >= 2 && i <= 10 && j >= 2 && j <= 10) {
+	 					var nrBombs = calcBombs(i, j);
+ 						emptySpaces(i, j, nrBombs);
+ 					}
  				}
  			}
  		}
