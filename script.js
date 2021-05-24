@@ -1,84 +1,61 @@
 var table = [];
-for (var i = 0; i < 9; i++) {
+for (var i = 1; i <= 11; i++) {
     table[i] = [];
-    for (var j = 0; j < 9; j++) {
+    for (var j = 1; j <= 11; j++) {
         table[i][j] = 0;
     }
 }
 
-// calculates the position of the bombs on the playing board
-var bombs = 10;
-while (bombs) {
-	var row = Math.floor(Math.random() * 9); 
-	var column = Math.floor(Math.random() * 9);
-	if (table[row][column] != 9) {
+//puts one bomb on the playing board
+function loadBomb() {
+	var row = Math.floor(Math.random() * (10 - 2 + 1) + 2);
+	var column = Math.floor(Math.random() * (10 - 2 + 1) + 2);
+	if (table[row][column] == 0) {
 		table[row][column] = 9;
-		bombs--; 
+	} else if (table[row][column] == 9) {
+		loadBomb();
 	}
 }
-var remainingBombs = 10;
 
 // generates playing board
 function loadTable() {
-	for (var i = 0; i < 9; i++) {
+	for (var i = 2; i <= 10; i++) {
 		$('#table').append(`
 			<tr></tr>
 		`)
-		for (var j = 0; j < 9; j++) {
+		for (var j = 2; j <= 10; j++) {
 			$('#table').append(`
-				<td><button type="button" class="btn btn-secondary btn-lg" id = "` + i + + j +`" onmousedown = "checkButton(event, id);"><i class="las la-code"></i></button></td>
+				<td><button type="button" class="btn btn-secondary btn-lg" id = "` + i + " " + j +`" onmousedown = "checkButton(event, id);"><i class="las la-code"></i></button></td>
 			`);
 		}
 	}
-}
-
-// calculates the value of a specific cell
-function getBombs(row, column) {
-	var closeBombs = 0;
-	if (table[row][column - 1] == 9 && (row >= 0 && row <= 8  && column - 1 >= 0 && column - 1 <= 8)) {
-		closeBombs++;
+	//generates all the bombs
+	for (var i = 1; i <= 10; i++) {
+		loadBomb();
 	}
-	if (table[row][column + 1] == 9 && (row >= 0 && row <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
-		closeBombs++;
-	}
-	if (table[row - 1][j + 1] == 9 && (row - 1 >= 0 && row - 1 <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
-		closeBombs++;
-	}
-	if (table[row - 1][column + 1] == 9 && (row - 1 >= 0 && row - 1 <= 8  && column + 1 >= 0 && column + 1 <= 8)) {
-		closeBombs++;
-	}
-	if (table[row - 1][column - 1] == 9 && (row - 1 >= 0 && row - 1 <= 8  && column - 1 >= 0 && column - 1 <= 8)) {
-		closeBombs++;
-	}
-	if (table[row + 1][column - 1] == 9 && (row + 1 >= 0 && row + 1<= 8  && column - 1 >= 0 && column - 1 <= 8)) {
-		closeBombs++;
-	}
-	if (table[row - 1][column] == 9 && (row - 1 >= 0 && row - 1 <= 8  && column >= 0 && column <= 8)) {
-		closeBombs++;
-	}
-	if (table[row + 1][column] == 9 && (row + 1 >= 0 && row + 1 <= 8  && column>= 0 && column<= 8)) {
-		closeBombs++;
-	}
-	if (closeBombs != 0) {
-		table[row][column] = 1;
-	} else {
-		table[row][column] = 2;
-	}
-	return closeBombs;
 }
 
 // checks if it is a bomb/not
 function checkButton(event, id) {
-	var row = Math.floor(parseInt(id) / 10);
-	var column = Math.floor(parseInt(id) % 10);
+	var n = '', rowCopy, columnCopy;
+	for (var i = 0; i < id.length; i++) {
+		n += id.charAt(i);
+		if (id.charAt(i) == ' ') {
+			rowCopy = n;
+			n = '';
+		}
+	}
+	columnCopy = n;
+	var row = parseInt(rowCopy);
+	var column = parseInt(columnCopy);
 	if (event.buttons == '2') {
 		document.getElementById(id).innerHTML = ('🚩');
 	} else {
 		if (table[row][column] == 9) {
-	 		for (var i = 0; i < 9; i++) {
-		    	for (var j = 0; j < 9; j++) {
+	 		for (var i = 2; i <= 10; i++) {
+		    	for (var j = 2; j <= 10; j++) {
 		        	if (table[i][j] == 9) {
-		        		var c = i + String(j);
+		        		var c = i + " " + j;
 		        		document.getElementById(c).innerHTML = ("💣");
 		        		document.getElementById(c).style.background='#E71023';
 		        	}
@@ -86,72 +63,47 @@ function checkButton(event, id) {
 			}
 		document.getElementById("status").innerHTML = "You lost! Please Restart!";
 		document.getElementById("status").style.color = "red";
-		} else if (table[row][column] != 9) {
-			var bombs = getBombs(row, column);	
-			emptySpaces(bombs, row, column);
-			//alert(table[row][column]); // primul bug nu merge pt primul si ultimul rand.
+		} else {
+			var bombs = calcBombs(row, column);
+			emptySpaces(row, column, bombs);
 		} 		
 	}
 	return false;
 }
 
-// emptys the spaces by game rules
-function emptySpaces(bombs, row, column) {
-	if (checkGameStatus()) {
-		document.getElementById("status").innerHTML = "You won!";
-		document.getElementById("status").style.color = "green";
-	}
- 	var id = row * 10 + column;
-	if (table[row][column] == 1) {
-		document.getElementById(id).innerHTML = bombs;
-		document.getElementById(id).style.background = "green";
-	} else if (table[row][column] == 2){
-		// al doilea bug: pt unele celule cu nr de bombe closebombs = 0, daca apasam o singura data click, se curata doar o parte din ce trebuie, dar daca dam dublu click, este ok.
-		// presupun ca se intampla acest lucru deoarece se executa mai multe functii in acelasi timp, nu mi dau seama de cum ar trebui sa impart logica codului
-		document.getElementById(id).innerHTML = ('0');
-		document.getElementById(id).style.background = "green";
-		// trebuie pusa o conditie ca sa nu calculeze de mai multe ori aceeasi casuta.
-		// daca valaorea casutei e 0, calculam nr de bombe si o curatam.
-		// apelam functie separata pt nr de bombe si clear space
-		var bomb1, bomb2, bomb3, bomb4, bomb5, bomb6, bomb7, bomb8; 
-		if (table[row][column + 1] == 0) { 
-			bomb1 = getBombs(row, column + 1);
-			emptySpaces(bomb1, row, column + 1);
-		}
-		if (table[row][column - 1] == 0) {
-			bomb2 = getBombs(row, column - 1);
-			emptySpaces(bomb2, row, column - 1);
-		}
-		if (table[row - 1][column - 1] == 0) {
-			bomb3 = getBombs(row - 1, column - 1);
-			emptySpaces(bomb3, row - 1, column - 1);
-		}
-		if (table[row + 1][column + 1] == 0) {
-			bomb4 = getBombs(row - 1, column + 1);
-			emptySpaces(bomb4, row - 1, column + 1);
-		}
-		if (table[row - 1][column] == 0) {
-			bomb5 = getBombs(row - 1, column);
-			emptySpaces(bomb5, row - 1, column);
-		}
-		if (table[row + 1][column] == 0) {
-			bomb6 = getBombs(row + 1, column);
-			emptySpaces(bomb6, row + 1, column);
-		}
-		if (table[row + 1][column + 1] == 0) {
-			bomb7 = getBombs(row + 1, column + 1);
-			emptySpaces(bomb7, row + 1, column + 1);
-		}
-		if (table[row + 1][column - 1] == 0) {
-			bomb8 = getBombs(row + 1, column - 1);
-			emptySpaces(bomb8, row + 1, column - 1);
+function calcBombs(row, column) {
+	var nrBombs = 0;
+	for (var i = row - 1; i <= row + 1; i++) {
+		for (var j = column - 1; j <= column + 1; j++) {
+			if (table[i][j] == 9) {
+				nrBombs++;
+			}
 		}
 	}
-	if (checkGameStatus()) {
-		document.getElementById("status").innerHTML = "You won!";
-		document.getElementById("status").style.color = "green";
-	}
+	return nrBombs;
 }
+
+function emptySpaces(row, column, bombs) {
+ 	if (table[row][column] == 0) {
+ 		if (bombs != 0) {
+ 			document.getElementById(row + " " + column).innerHTML = bombs;
+ 			document.getElementById(row + " " + column).className = "btn btn-success btn-lg";
+ 			table[i][j] = 1;
+ 		} else {
+ 			document.getElementById(row + " " + column).innerHTML = ("0");
+ 			document.getElementById(row + " " + column).className = "btn btn-success btn-lg";
+ 			table[row][column] = 2;
+ 			// aici trb sa revizuiesc
+ 			for (var i = row - 1; i <= row + 1; i++) {
+ 				for (var j = column - 1; j <= column + 1; j++) {
+ 					var nrBombs = calcBombs(i, j);
+ 					emptySpaces(i, j, nrBombs);
+ 				}
+ 			}
+ 			// un for pt a elibera vecinii, table[rand][coloana = 2];
+ 		}
+ 	}
+ }
 
 function checkGameStatus() {
 	for (var i = 0; i < 9; i++) {
