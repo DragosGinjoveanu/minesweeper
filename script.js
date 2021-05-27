@@ -35,6 +35,55 @@ function loadTable() {
 	}
 }
 
+function calcBombs(row, column) {
+	var nrBombs = 0;
+	for (var i = row - 1; i <= row + 1; i++) {
+		for (var j = column - 1; j <= column + 1; j++) {
+			if (table[i][j] == 9) {
+				nrBombs++;
+			}
+		}
+	}
+	return nrBombs;
+}
+
+function checkGameStatus() {
+	for (var i = 2; i <= 10; i++) {
+		for (var j = 2; j <= 10; j++) {
+			if (table[i][j] == 0) {
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+function emptySpaces(row, column, bombs) {
+ 	if (table[row][column] == 0) {
+ 		if (bombs != 0) {
+ 			document.getElementById(row + " " + column).innerHTML = bombs;
+ 			document.getElementById(row + " " + column).className = "btn btn-success btn-lg";
+ 			table[row][column] = 1;
+ 		} else {
+ 			document.getElementById(row + " " + column).innerHTML = ("0");
+ 			document.getElementById(row + " " + column).className = "btn btn-success btn-lg";
+ 			table[row][column] = 2;
+ 			for (var i = row - 1; i <= row + 1; i++) {
+ 				for (var j = column - 1; j <= column + 1; j++) {
+ 					if (i >= 2 && i <= 10 && j >= 2 && j <= 10) {
+	 					var nrBombs = calcBombs(i, j);
+ 						emptySpaces(i, j, nrBombs);
+ 					}
+ 				}
+ 			}
+ 		}
+ 	}
+ 	if (checkGameStatus()) {
+ 		document.getElementById("status").innerHTML = "You won!";
+ 		document.getElementById("status").style.color = "green";
+ 	}
+}
+
 // checks if the cell is a bomb/not
 function checkButton(event, id) {
 	//gets row/column from id
@@ -72,55 +121,6 @@ function checkButton(event, id) {
 		} 		
 	}
 	return false;
-}
-
-function calcBombs(row, column) {
-	var nrBombs = 0;
-	for (var i = row - 1; i <= row + 1; i++) {
-		for (var j = column - 1; j <= column + 1; j++) {
-			if (table[i][j] == 9) {
-				nrBombs++;
-			}
-		}
-	}
-	return nrBombs;
-}
-
-function emptySpaces(row, column, bombs) {
- 	if (table[row][column] == 0) {
- 		if (bombs != 0) {
- 			document.getElementById(row + " " + column).innerHTML = bombs;
- 			document.getElementById(row + " " + column).className = "btn btn-success btn-lg";
- 			table[row][column] = 1;
- 		} else {
- 			document.getElementById(row + " " + column).innerHTML = ("0");
- 			document.getElementById(row + " " + column).className = "btn btn-success btn-lg";
- 			table[row][column] = 2;
- 			for (var i = row - 1; i <= row + 1; i++) {
- 				for (var j = column - 1; j <= column + 1; j++) {
- 					if (i >= 2 && i <= 10 && j >= 2 && j <= 10) {
-	 					var nrBombs = calcBombs(i, j);
- 						emptySpaces(i, j, nrBombs);
- 					}
- 				}
- 			}
- 		}
- 	}
- 	if (checkGameStatus()) {
- 		document.getElementById("status").innerHTML = "You won!";
- 		document.getElementById("status").style.color = "green";
- 	}
-}
-
-function checkGameStatus() {
-	for (var i = 2; i <= 10; i++) {
-		for (var j = 2; j <= 10; j++) {
-			if (table[i][j] == 0) {
-				return 0;
-			}
-		}
-	}
-	return 1;
 }
 
 function restartGame() {
